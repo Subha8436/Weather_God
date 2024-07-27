@@ -1,94 +1,77 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('search-input');
+    const apiKey = '0abedba42881be4104bab90a6388420e';
     const searchButton = document.getElementById('search-button');
+    const searchInput = document.getElementById('search-input');
     const weatherInfo = document.getElementById('weather-info');
     const forecastInfo = document.getElementById('forecast-info');
     const toggleThemeButton = document.getElementById('toggle-theme');
     const body = document.body;
 
-    // Dark mode toggle
-    toggleThemeButton.addEventListener('click', () => {
-        if (body.classList.contains('light-mode')) {
-            body.classList.remove('light-mode');
-            body.classList.add('dark-mode');
-            toggleThemeButton.textContent = 'Switch to Light Mode';
-        } else {
-            body.classList.remove('dark-mode');
-            body.classList.add('light-mode');
-            toggleThemeButton.textContent = 'Switch to Dark Mode';
-        }
-    });
+    // Function to fetch weather data
+    const getWeatherData = async (city) => {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        return data;
+    };
 
-    // Search button click event
-    searchButton.addEventListener('click', () => {
-        const location = searchInput.value;
-        if (location) {
-            fetchCurrentWeather(location);
-            fetchWeatherForecast(location);
-        }
-    });
+    // Function to fetch forecast data
+    const getForecastData = async (city) => {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        return data;
+    };
 
-    // Fetch current weather
-    function fetchCurrentWeather(location) {
-        fetch(`/.netlify/functions/weather?q=${location}`)
-            .then(response => response.json())
-            .then(data => {
-                displayWeather(data);
-            })
-            .catch(error => {
-                weatherInfo.textContent = 'Error fetching weather data. Please try again.';
-            });
-    }
+    // Function to display weather data
+    const displayWeather = (data) => {
+        weatherInfo.innerHTML = `
+            <h2>Current Weather in ${data.name}</h2>
+            <p>Temperature: ${data.main.temp} °C</p>
+            <p>Weather: ${data.weather[0].description}</p>
+            <p>Humidity: ${data.main.humidity}%</p>
+            <p>Wind Speed: ${data.wind.speed} m/s</p>
+        `;
+    };
 
-    // Fetch weather forecast
-    function fetchWeatherForecast(location) {
-        fetch(`/.netlify/functions/weather?q=${location}`)
-            .then(response => response.json())
-            .then(data => {
-                displayForecast(data);
-            })
-            .catch(error => {
-                forecastInfo.textContent = 'Error fetching weather forecast. Please try again.';
-            });
-    }
-
-    // Display current weather
-    function displayWeather(data) {
-        if (data.cod === '404') {
-            weatherInfo.textContent = 'Location not found. Please try again.';
-        } else {
-            const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
-            const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString();
-            weatherInfo.innerHTML = `
-                <h2>${data.name}, ${data.sys.country}</h2>
-                <p><img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather icon"> ${data.weather[0].description}</p>
-                <p>Temperature: ${data.main.temp}°C</p>
-                <p>Humidity: ${data.main.humidity}%</p>
-                <p>Pressure: ${data.main.pressure} hPa</p>
-                <p>Wind Speed: ${data.wind.speed} m/s</p>
-                <p>Sunrise: ${sunrise}</p>
-                <p>Sunset: ${sunset}</p>
+    // Function to display forecast data
+    const displayForecast = (data) => {
+        forecastInfo.innerHTML = '<h2>5-Day Forecast</h2>';
+        data.list.forEach(item => {
+            forecastInfo.innerHTML += `
+                <div>
+                    <p>${new Date(item.dt_txt).toLocaleString()}</p>
+                    <p>Temperature: ${item.main.temp} °C</p>
+                    <p>Weather: ${item.weather[0].description}</p>
+                </div>
             `;
-        }
-    }
+        });
+    };
 
-    // Display weather forecast
-    function displayForecast(data) {
-        if (data.cod === '404') {
-            forecastInfo.textContent = 'Location not found. Please try again.';
-        } else {
-            let forecastHTML = '<h3>5-Day Forecast:</h3>';
-            data.list.forEach(item => {
-                const date = new Date(item.dt * 1000);
-                forecastHTML += `
-                    <div class="forecast-day">
-                        <p>${date.toDateString()}</p>
-                        <p><img src="http://openweathermap.org/img/wn/${item.weather[0].icon}.png" alt="Weather icon"> ${item.weather[0].description}</p>
-                        <p>Temperature: ${item.main.temp}°C</p>
-                    </div>
-                `;
-            });
-            forecastInfo.innerHTML = forecastHTML;
-        }
+    // Event listener for search button
+    searchButton.addEventListener('click', async () => {
+        const city = searchInput.value;
+        const weatherData = await getWeatherData(city);
+        displayWeather(weatherData);
+        const forecastData = await getForecastData(city);
+        displayForecast(forecastData);
+    });
+
+    // Event listener for theme toggle button
+    toggleThemeButton.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        toggleThemeButton.textContent = body.classList.contains('dark-mode') ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    });
+
+    // Fetch and display weather data based on user's location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
+            const data = await response.json();
+            displayWeather(data);
+
+            const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
+            const forecastData = await forecastResponse.json();
+            displayForecast(forecastData);
+        });
     }
 });
