@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleThemeButton = document.getElementById('toggle-theme');
     const body = document.body;
 
+    // Dark mode toggle
     toggleThemeButton.addEventListener('click', () => {
         if (body.classList.contains('light-mode')) {
             body.classList.remove('light-mode');
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Search button click event
     searchButton.addEventListener('click', () => {
         const location = searchInput.value;
         if (location) {
@@ -26,8 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Fetch current weather
     function fetchCurrentWeather(location) {
-        fetch(`/weather?q=${location}`)
+        fetch(`/.netlify/functions/weather?q=${location}`)
             .then(response => response.json())
             .then(data => {
                 displayWeather(data);
@@ -37,8 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    // Fetch weather forecast
     function fetchWeatherForecast(location) {
-        fetch(`/forecast?q=${location}`)
+        fetch(`/.netlify/functions/weather?q=${location}`)
             .then(response => response.json())
             .then(data => {
                 displayForecast(data);
@@ -48,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    // Display current weather
     function displayWeather(data) {
         if (data.cod === '404') {
             weatherInfo.textContent = 'Location not found. Please try again.';
@@ -60,59 +65,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>Temperature: ${data.main.temp}°C</p>
                 <p>Humidity: ${data.main.humidity}%</p>
                 <p>Pressure: ${data.main.pressure} hPa</p>
-                <p>Wind Speed: ${data.wind.speed} m/s, Direction: ${data.wind.deg}°</p>
+                <p>Wind Speed: ${data.wind.speed} m/s</p>
                 <p>Sunrise: ${sunrise}</p>
                 <p>Sunset: ${sunset}</p>
             `;
         }
     }
 
+    // Display weather forecast
     function displayForecast(data) {
         if (data.cod === '404') {
             forecastInfo.textContent = 'Location not found. Please try again.';
         } else {
-            forecastInfo.innerHTML = '<h3>5-Day Forecast:</h3>';
-            const forecastDays = data.list.filter((item, index) => index % 8 === 0);
-            forecastDays.forEach(day => {
-                const date = new Date(day.dt * 1000).toLocaleDateString();
-                forecastInfo.innerHTML += `
+            let forecastHTML = '<h3>5-Day Forecast:</h3>';
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000);
+                forecastHTML += `
                     <div class="forecast-day">
-                        <h4>${date}</h4>
-                        <p><img src="http://openweathermap.org/img/wn/${day.weather[0].icon}.png" alt="Weather icon"> ${day.weather[0].description}</p>
-                        <p>Temperature: ${day.main.temp}°C</p>
-                        <p>Humidity: ${day.main.humidity}%</p>
+                        <p>${date.toDateString()}</p>
+                        <p><img src="http://openweathermap.org/img/wn/${item.weather[0].icon}.png" alt="Weather icon"> ${item.weather[0].description}</p>
+                        <p>Temperature: ${item.main.temp}°C</p>
                     </div>
                 `;
             });
+            forecastInfo.innerHTML = forecastHTML;
         }
     }
-
-    // Geolocation
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            fetch(`/weather?lat=${lat}&lon=${lon}`)
-                .then(response => response.json())
-                .then(data => {
-                    displayWeather(data);
-                })
-                .catch(error => {
-                    weatherInfo.textContent = 'Error fetching weather data. Please try again.';
-                });
-            fetch(`/forecast?lat=${lat}&lon=${lon}`)
-                .then(response => response.json())
-                .then(data => {
-                    displayForecast(data);
-                })
-                .catch(error => {
-                    forecastInfo.textContent = 'Error fetching weather forecast. Please try again.';
-                });
-        }, error => {
-            weatherInfo.textContent = 'Unable to retrieve your location. Please search for a location manually.';
-        });
-    } else {
-        weatherInfo.textContent = 'Geolocation is not supported by this browser. Please search for a location manually.';
-    }
 });
-      
