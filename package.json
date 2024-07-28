@@ -1,19 +1,20 @@
 {
   "name": "weather-god",
   "version": "1.0.0",
-  "description": "Weather application",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "export": "webpack --config webpack.export.js",
+    "start": "node server.js"
   },
   "author": "Subhasish Adhikary",
   "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
   "devDependencies": {
-    "webpack": "^5.0.0",
-    "webpack-cli": "^4.0.0",
-    "babel-loader": "^8.0.0",
-    "css-loader": "^6.0.0",
-    "style-loader": "^3.0.0",
-    "file-loader": "^6.0.0"
+    "webpack": "^5.52.0",
+    "webpack-cli": "^4.8.0"
   }
 }
