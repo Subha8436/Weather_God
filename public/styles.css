@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
@@ -12,6 +12,9 @@ header {
     color: #fff;
     padding: 20px;
     text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .container {
@@ -53,9 +56,10 @@ header {
 #weather-info, #forecast-info {
     background-color: #fff;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+    font-size: 18px;
 }
 
 #toggle-theme {
@@ -110,4 +114,4 @@ header {
 
 .dark-mode #toggle-theme:hover {
     background-color: #3498db;
-        }
+}
