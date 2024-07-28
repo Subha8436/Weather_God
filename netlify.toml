@@ -4,5 +4,6 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "https://api.openweathermap.org/data/2.5/*"
   status = 200
+  force = true
