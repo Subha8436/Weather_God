@@ -3,52 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather_Godless</title>
+    <title>Weather God</title>
     <link rel="stylesheet" href="styles.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-xxxxxxxxxxxxxxxx",
-            enable_page_level_ads: true
-        });
-    </script>
+    <script src="script.js" defer></script>
 </head>
 <body>
+    <header>
+        <h1>Weather God</h1>
+        <button id="toggle-theme">
+            <img id="theme-icon" src="light_mode_icon.png" alt="Toggle Theme" />
+        </button>
+    </header>
     <div class="container">
-        <h1>Weather_Godless</h1>
-
-        <!-- AdSense Ad Placement -->
-        <div class="adsense">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+        <div id="search-bar">
+            <input type="text" id="search-input" placeholder="Enter city name">
+            <button id="search-button">Search</button>
         </div>
-
-        <input type="text" id="search-input" placeholder="Enter city name">
-        <button id="search-button">Search</button>
-        <button id="toggle-theme">Switch to Dark Mode</button>
         <div id="weather-info"></div>
         <div id="forecast-info"></div>
-
-        <!-- Another AdSense Ad Placement -->
-        <div class="adsense">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
