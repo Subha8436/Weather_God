@@ -1,5 +1,5 @@
 {
-  "name": "weather-web",
+  "name": "weather-god",
   "version": "1.0.0",
   "description": "A weather web application",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "build": "webpack --config webpack.config.js",
     "export": "webpack --config webpack.export.js"
   },
-  "author": "Your Name",
+  "author": "Subhasish Adhikary",
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
